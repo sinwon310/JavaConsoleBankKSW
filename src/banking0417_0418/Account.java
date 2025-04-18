@@ -2,8 +2,7 @@ package banking0417_0418;
 
 import java.util.Scanner;
 
-public class 
-Account {
+public abstract class Account {
 	//계좌번호(String형), 이름(String형), 잔액(int형)
 	//3.Account 클래스
 	private String accNum;
