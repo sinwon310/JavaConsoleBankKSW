@@ -1,4 +1,4 @@
-package banking0417;
+package banking0417_0418;
 //5.인터페이스
 public interface ICustomDefine {
 	

@@ -1,12 +1,12 @@
-package banking0417;
+package banking0417_0418;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class BankingSystemMain {
 	
 	static Scanner scan = new Scanner(System.in);
-	static MenuSelectException menusel = 
-			new MenuSelectException();
+	
 	
 	public static void main(String[] args) {
 		
@@ -14,10 +14,14 @@ public class BankingSystemMain {
 		while(true) {
 		AccountManager.showMenu();
 		System.out.print("메뉴입력:");
-		
-		//menusel.menuexc();
-		int key = scan.nextInt();
-		scan.nextLine();
+		int key;
+		try{
+			key = readmenu();
+		}
+		catch(MenuSelectException e) {
+			System.out.println(e.getMessage());
+			continue;
+		}
 		switch(key) {
 		case ICustomDefine.MAKE:
 				//계좌개설
@@ -56,6 +60,29 @@ public class BankingSystemMain {
 				break;
 			}//switch 끝
 		}//while 끝
+		
+		
+		
 	}//main 끝
+	
+	public static int readmenu() throws MenuSelectException{
+		int key = 0;
+		try {
+			key = scan.nextInt();
+			scan.nextLine();
+		}
+		catch(InputMismatchException e) {
+			System.out.println("숫자만 입력 가능합니다");
+			e.printStackTrace();
+			System.exit(0);
+		}
+		if(key<=0 || key>5) {
+			MenuSelectException menusel = 
+					new MenuSelectException();
+			throw menusel;
+		}
+		return key;
+	}
+	
 
 }//class 끝
