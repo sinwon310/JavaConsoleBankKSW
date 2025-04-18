@@ -1,5 +1,6 @@
 package banking0417_0418;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class AccountManager {
@@ -69,29 +70,43 @@ public class AccountManager {
     public static void depositMoney() {
         System.out.print("계좌번호:");
         String accNum1 = scan.nextLine();
-
-        boolean isFind = false;
-        for (int i = 0; i < accCnt; i++) {
-            if (accounts[i].getAccNum().equals(accNum1)) {
-                System.out.print("입금액:");
-                int money = scan.nextInt();
-                scan.nextLine();
-
-                if (accounts[i] instanceof HighCreditAccount) {
-                    ((HighCreditAccount) accounts[i]).calHInterest(money);
-                } else if (accounts[i] instanceof NormalAccount) {
-                    ((NormalAccount) accounts[i]).calNInterest(money);
-                }
-
-                isFind = true;
-                break;
-            }
-        }
-        if (!isFind) {
-            System.out.println("계좌가 존재하지 않습니다.");
-        } else {
-            System.out.println("입금이 완료되었습니다.");
-        }
+        
+        try {
+        	boolean isFind = false;
+        	
+        	for (int i = 0; i < accCnt; i++) {
+        		if (accounts[i].getAccNum().equals(accNum1)) {
+        			System.out.print("입금액:");
+        			int money = scan.nextInt();
+        			scan.nextLine();
+        			if (money <= 0) {
+        				System.out.println("입금액은 1원 이상이어야 합니다.");
+        				return;
+        			}
+        			if(money%500 != 0) {
+        				System.out.println("입금액은 500원 단위로만 가능합니다.");
+        				return;
+        			}
+        			
+        			if (accounts[i] instanceof HighCreditAccount) {
+        				((HighCreditAccount) accounts[i]).calHInterest(money);
+        			} else if (accounts[i] instanceof NormalAccount) {
+        				((NormalAccount) accounts[i]).calNInterest(money);
+        			}
+        			
+        			isFind = true;
+        			break;
+        		}
+        	}
+        	if (!isFind) {
+        		System.out.println("계좌가 존재하지 않습니다.");
+        	} else {
+        		System.out.println("입금이 완료되었습니다.");
+        	}
+			
+		} catch (InputMismatchException e) {
+			System.out.println("숫자가 아닙니다.");
+		}
     }
 
     // 출금
@@ -105,6 +120,44 @@ public class AccountManager {
                 System.out.print("출금액:");
                 int money = scan.nextInt();
                 scan.nextLine();
+                if (money <= 0) {
+    				System.out.println("출금액은 1원 이상이어야 합니다.");
+    				return;
+    			}
+                if(money%1000 != 0) {
+    				System.out.println("출금액은 1000원 단위로만 가능합니다.");
+    				return;
+    			}
+                if(money>accounts[i].getBalance()) {
+                	System.out.println("잔액이 부족합니다.\n"
+                			+ "금액 전체를 출금할까요?");
+                	System.out.println("1.예  2.아니오");
+                	
+                	int answer;
+                    while (true) {
+                        try {
+                            answer = scan.nextInt();
+                            scan.nextLine();
+                            if (answer == 1) {
+                                money = accounts[i].getBalance();
+                                break;
+                            } else if (answer == 2) {
+                                System.out.println("출금이 취소되었습니다.");
+                                return;
+                            } else {
+                                System.out.println("1 또는 2만 입력해주세요.");
+                            }
+                        } catch (InputMismatchException e) {
+                            System.out.println("숫자만 입력 가능합니다. 다시 입력해주세요.");
+                            scan.nextLine();
+                        }
+                    }
+                    
+                	
+                }
+                
+                
+                
 
                 accounts[i].withdraw(money);
                 isFind = true;
